@@ -1,0 +1,49 @@
+# 港股十倍股量化選股系統配置
+
+stock_picker:
+  # 市值閾值 (港幣)
+  # 5億港幣 ≈ 6,400萬美元 (按 7.8 HKD = 1 USD)
+  market_cap:
+    max: 500_000_000   # 5億港幣
+    min: 50_000_000    # 5,000萬港幣 (避免極低流動性)
+
+  # 評分權重 (總和 = 1.0)
+  weights:
+    market_cap: 0.1667      # 市值分
+    value: 0.1667           # 價值分
+    cash_flow: 0.1667       # 現金流分
+    price_position: 0.1667   # 低位分
+    balance: 0.1667         # 平衡分
+    rate_sensitivity: 0.1667 # 利率敏感度分
+
+  # 篩選市場
+  markets:
+    - HK    # 港股
+
+  # 數據源優先順序
+  data_sources:
+    primary: yfinance
+    fallback:
+      - alpha_vantage
+
+# Telegram 通知設定
+telegram:
+  enabled: false
+  bot_token: "${TELEGRAM_BOT_TOKEN}"
+  chat_id: "${TELEGRAM_CHAT_ID}"
+
+# 任務排程
+scheduler:
+  # 每日幾點運行 (香港時區 UTC+8)
+  daily_run_hour: 9
+  daily_run_minute: 30
+  
+  # 市場選擇
+  market_session: "HK"  # 港股交易日 (GMT+8)
+
+# 回測設定
+backtest:
+  enabled: false
+  start_date: "2020-01-01"
+  end_date: "2024-12-31"
+  initial_capital: 1_000_000  # 港幣 100萬
