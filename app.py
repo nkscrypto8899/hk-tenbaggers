@@ -407,32 +407,22 @@ def main():
         
         st.markdown("""
         ### 🚀 快捷小型股清單
-        以下係熱門小型港股（可自行修改代碼）：
+        以下係從 CSV 載入嘅港股清單（可自行修改代碼）：
         """)
         
-        # 預設股票清單 - 港股小型股
-        default_hk_stocks = [
-            "1810",  # 小米
-            "6618",  # 京東健康
-            "6060",  # 眾安在線
-            "3759",  # 康希通信
-            "2138",  # 醫思健康
-            "3309",  # 希瑪眼科
-            "1549",  # FSL富線
-            "9999",  # 網易
-            "0700",  # 騰訊
-            "9988",  # 阿里巴巴
-            "3690",  # 美團
-            "9618",  # 京東
-            "1024",  # 快手
-            "2638",  # 香港電訊
-            "6823",  # 香港寬頻
-            "0688",  # 中海外
-            "1109",  # 華潤置地
-            "0001",  # 長和
-            "0016",  # 新鴻基
-            "0012",  # 恒生地產
-        ]
+        # 從 CSV 載入股票清單
+        csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hk_stocks.csv")
+        if os.path.exists(csv_path):
+            try:
+                df_stocks = pd.read_csv(csv_path)
+                default_hk_stocks = df_stocks['code'].astype(str).tolist()
+                st.success(f"📋 已載入 {len(default_hk_stocks)} 支港股")
+            except Exception as e:
+                st.warning(f"無法載入 CSV，使用預設清單: {e}")
+                default_hk_stocks = ["0700", "0999", "1810", "6618", "6060", "3690", "9988", "9618", "1024"]
+        else:
+            st.warning("hk_stocks.csv 未找到，使用預設清單")
+            default_hk_stocks = ["0700", "0999", "1810", "6618", "6060", "3690", "9988", "9618", "1024"]
         
         # 顯示預設清單
         col1, col2 = st.columns([3, 1])
@@ -441,7 +431,7 @@ def main():
             stocks_input = st.text_area(
                 "股票代碼 (一行一個，輸入4位數字)",
                 value="\n".join(default_hk_stocks),
-                height=200,
+                height=300,
                 help="輸入股票代碼，每行一個"
             )
         
